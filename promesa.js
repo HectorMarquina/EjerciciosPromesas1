@@ -109,39 +109,38 @@ cadenaDePromesas(3)
 
 
 
-//EJERCICIO 5
+// EJERCICIO 5
 function promesaCancelacion() {
     let cancelada = false;
 
-    const promesa = new Promise((resolve, reject) => {
-        const temporizador = setTimeout(() => {
+    const promesaPrincipal = new Promise((resolve, reject) => {
+        setTimeout(() => {
             if (!cancelada) {
-                resolve('Promesa realizada');
+                resolve('La promesa se ha completado después de 5 segundos');
             }
         }, 5000);
-
-        function cancel() {
-            if (!cancelada) {
-                cancelada = true;
-                clearTimeout(temporizador);
-                reject('Promesa cancelada');
-            }
-        }
-
-        promesa.cancel = cancel;
     });
 
-    return promesa;
+    const cancelarPromesa = () => {
+        cancelada = true;
+        console.log('Promesa cancelada');
+    };
+
+    return { promesaPrincipal, cancelarPromesa };
 }
 
-const miPromesa = promesaCancelacion();
 
-miPromesa.then((mensaje) => {
-    console.log(mensaje);
-}).catch((error) => {
-    console.error(error);
-});
+const { promesaPrincipal, cancelarPromesa } = promesaCancelacion();
 
-setTimeout(() => {
-    miPromesa.cancel();
-}, 3000);
+promesaPrincipal
+    .then((mensaje) => {
+        console.log(mensaje);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+
+    setTimeout(() => {
+        console.log('Cancelando...');
+        cancelarPromesa(); // Llamar a cancelar. Si se quita esto, la promesa se cumple.
+    }, 3000);
